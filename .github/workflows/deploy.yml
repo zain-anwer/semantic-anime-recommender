@@ -12,9 +12,24 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Replace 'your-username/your-space-name' with your actual HF info
+          # 1. Configure a temporary git user for the action
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          # 2. Scrub the "monorepo" assets that Hugging Face doesn't need
+          # This prevents the 'Binary File' and 'Large File' errors
+          git rm -rf --cached frontend/ || true
+          git rm -rf --cached *.csv || true
+          git rm -rf --cached *.png || true
+          git rm -rf --cached *.jpg || true
+
+          # 3. Commit the cleaned state locally in the runner
+          git commit -m "Internal: Filtered assets for HF Space deployment"
+
+          # 4. Push the cleaned backend code to Hugging Face
           git push --force https://ze19n:$HF_TOKEN@huggingface.co/spaces/ze19n/anime-recommender-backend main
