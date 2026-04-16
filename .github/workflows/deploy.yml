@@ -1,35 +1,22 @@
-name: Sync to Hugging Face Hub
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-jobs:
-  sync-to-hub:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Push to hub
+- name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # 1. Create a temporary deployment folder
           mkdir deploy_dir
           
-          # 2. Copy ONLY what is needed (No frontend, no images)
+          # Copy backend contents
           cp -r backend/* deploy_dir/
-          cp Dockerfile deploy_dir/
           
-          # 3. Initialize a brand NEW git repo in that folder (destroys all history)
+          # If Dockerfile is inside backend, it's already copied. 
+          # If it's in the root, this next line catches it.
+          cp Dockerfile deploy_dir/ 2>/dev/null || echo "Dockerfile already in deploy_dir"
+          
           cd deploy_dir
           git init
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-          
-          # 4. Add files and commit (this creates a single, tiny commit)
           git add .
-          git commit -m "Clean deployment of backend only"
+          git commit -m "Clean deployment"
           
-          # 5. Force push this "history-less" commit to Hugging Face
+          # Force push to HF
           git push --force https://ze19n:$HF_TOKEN@huggingface.co/spaces/ze19n/anime-recommender-backend master:main
