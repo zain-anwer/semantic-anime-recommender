@@ -1,4 +1,20 @@
-run: |
+name: Sync to Hugging Face Hub
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Push to hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # 1. Create temporary directory and copy code
           mkdir deploy_dir
           cp -r backend/* deploy_dir/
           if [ -f "Dockerfile" ]; then
@@ -7,7 +23,7 @@ run: |
           
           cd deploy_dir
           
-          # --- ADD THIS PART: Create the README with metadata ---
+          # 2. Create the missing Hugging Face Configuration File
           cat <<EOF > README.md
           ---
           title: Anime Recommender Backend
@@ -15,18 +31,18 @@ run: |
           colorFrom: blue
           colorTo: indigo
           sdk: docker
-          app_port: 7860
+          app_port: 8000
           pinned: false
           ---
           # Anime Recommender Backend
           FastAPI backend for semantic anime search.
           EOF
-          # ------------------------------------------------------
-
+          
+          # 3. Clean Push to Hugging Face
           git init
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
           git checkout -b main
           git add .
-          git commit -m "Clean deployment with required metadata"
+          git commit -m "Clean deployment with HF metadata"
           git push --force https://ze19n:$HF_TOKEN@huggingface.co/spaces/ze19n/anime-recommender-backend main:main
