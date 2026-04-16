@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
-from backend.database import anime_collection, query_cache
-from backend.recommender import get_recommendations
+from database import anime_collection, query_cache
+from recommender import get_recommendations
 from test_cases import TEST_SET
 
 

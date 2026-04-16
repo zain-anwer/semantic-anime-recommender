@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
-from backend.recommender import get_recommendations
-from backend.models import RecommenderRequest, RecommenderResponse
-from backend.config import lifespan
+from recommender import get_recommendations
+from models import RecommenderRequest, RecommenderResponse
+from config import lifespan
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import dotenv

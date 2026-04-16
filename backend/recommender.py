@@ -1,7 +1,7 @@
 # I just got confused between strip and split ~_~
 
 from fastapi import FastAPI, Request
-from backend.database import anime_collection, query_cache
+from database import anime_collection, query_cache
 from rapidfuzz import process, fuzz
 from nltk.corpus import stopwords
 from datetime import datetime

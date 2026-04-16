@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from backend.database import anime_collection
+from database import anime_collection
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 import os
