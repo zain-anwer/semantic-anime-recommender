@@ -24,8 +24,14 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-@app.post("/recommend-anime")
+@app.get("/")
+def home():
+    return {
+        "message": "Anime Recommender API is live!",
+        "endpoints": ["/recommend-anime"]
+    }
 
+@app.post("/recommend-anime")
 def recommend_anime(req: RecommenderRequest, request : Request):
 
     print("Recommendation API being called from frontend")
